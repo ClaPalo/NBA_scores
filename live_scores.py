@@ -5,6 +5,9 @@ import pyfiglet
 from rich.console import Console
 from nba_api.live.nba.endpoints import scoreboard
 
+font_teams = "ansi_regular"
+font_time = "ansi_regular"
+
 
 colors = {
     "GSW": "#1D428A",
@@ -93,11 +96,11 @@ def print_score(team1, score1, team2, score2, time):
         color2 = "red"
 
     team1 = pyfiglet.figlet_format(
-        team1 + " " + str(score1), font="ansi_regular")
+        team1 + " " + str(score1), font=font_teams)
     team2 = pyfiglet.figlet_format(
-        team2 + " " + str(score2), font="ansi_regular")
+        team2 + " " + str(score2), font=font_teams)
 
-    time = pyfiglet.figlet_format(time, font="ansi_regular")
+    time = pyfiglet.figlet_format(time, font=font_time)
 
     console.print(team1, style=color1)
     console.print(time, style="white")
