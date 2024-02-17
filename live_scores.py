@@ -141,6 +141,15 @@ def print_score(team1, score1, team2, score2, time):
     console.print(team2, style=color2)
 
 
+def print_no_games():
+    global args
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("\033[1;1H", end="")
+
+    text = pyfiglet.figlet_format("No games today :(", font=args.font_teams)
+    console.print(text, style="white")
+
+
 while True:
     #  Query the NBA API for the current games
     games = scoreboard.ScoreBoard().games.get_dict()
@@ -173,9 +182,12 @@ while True:
                 res["time"] = "Final"
             my_games.append(res)
 
-    # Calculate the number of windows based on the number of current games
-    number_of_windows = math.ceil(len(my_games)/args.game_window)
+    if len(my_games) != 0:
+        # Calculate the number of windows based on the number of current games
+        number_of_windows = math.ceil(len(my_games)/args.game_window)
 
-    # Print the scores
-    print_scores(my_games)
+        # Print the scores
+        print_scores(my_games)
+    else:
+        print_no_games()
     time.sleep(args.update_interval)
