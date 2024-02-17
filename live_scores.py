@@ -5,13 +5,20 @@ import isodate
 import pyfiglet
 from rich.console import Console
 from nba_api.live.nba.endpoints import scoreboard
+import argparse
 
-######## CONFIGURATION ########
-font_teams = "ansi_regular"
-font_time = "ansi_regular"
-update_interval = 5  # seconds
-game_window = 3  # Max number of games to display
-###############################
+parser = argparse.ArgumentParser(description='NBA Live Scores')
+parser.add_argument('--font_teams', type=str,
+                    default="ansi_regular", help='Font for the teams. The font must be installed in /usr/share/figlet. Visit https://github.com/xero/figlet-fonts for more fonts.')
+parser.add_argument('--font_time', type=str,
+                    default="ansi_regular", help='Font for the time. The font must be installed in /usr/share/figlet. Visit https://github.com/xero/figlet-fonts for more fonts.')
+parser.add_argument('--update_interval', '-i', type=float,
+                    default=5, help='Update interval in seconds.')
+parser.add_argument('--game_window', '-w', type=int, default=3,
+                    help='Max number of games to display at the same time.')
+
+args = parser.parse_args()
+
 
 # Team colors
 colors = {
@@ -81,9 +88,9 @@ def pad_time(time):
 #     "time": string
 # }
 def print_scores(games):
+    global args
     global current_window
     global number_of_windows
-    global game_window
 
     # Clear the console
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -94,7 +101,7 @@ def print_scores(games):
     if current_window > number_of_windows:
         current_window = 1
 
-    for i in range((current_window - 1) * game_window, current_window * game_window):
+    for i in range((current_window - 1) * args.game_window, current_window * args.game_window):
         if i < len(games):
             game = games[i]
             print_score(game["team1"], game["score1"],
@@ -110,6 +117,8 @@ def print_scores(games):
 
 
 def print_score(team1, score1, team2, score2, time):
+    global args
+
     try:
         color1 = colors[team1]
     except KeyError:
@@ -120,10 +129,12 @@ def print_score(team1, score1, team2, score2, time):
     except KeyError:
         color2 = "red"
 
-    team1 = pyfiglet.figlet_format(team1 + " " + str(score1), font=font_teams)
-    team2 = pyfiglet.figlet_format(team2 + " " + str(score2), font=font_teams)
+    team1 = pyfiglet.figlet_format(
+        team1 + " " + str(score1), font=args.font_teams)
+    team2 = pyfiglet.figlet_format(
+        team2 + " " + str(score2), font=args.font_teams)
 
-    time = pyfiglet.figlet_format(time, font=font_time)
+    time = pyfiglet.figlet_format(time, font=args.font_time)
 
     console.print(team1, style=color1)
     console.print(time, style="white")
@@ -163,8 +174,8 @@ while True:
             my_games.append(res)
 
     # Calculate the number of windows based on the number of current games
-    number_of_windows = math.ceil(len(my_games)/game_window)
+    number_of_windows = math.ceil(len(my_games)/args.game_window)
 
     # Print the scores
     print_scores(my_games)
-    time.sleep(update_interval)
+    time.sleep(args.update_interval)
