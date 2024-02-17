@@ -1,0 +1,5 @@
+electronic
+dos_rebel
+computer
+ansi_regular
+ansi_shadow
