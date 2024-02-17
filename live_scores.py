@@ -1,3 +1,4 @@
+import math
 import os
 import time
 import isodate
@@ -9,6 +10,7 @@ from nba_api.live.nba.endpoints import scoreboard
 font_teams = "ansi_regular"
 font_time = "ansi_regular"
 update_interval = 5  # seconds
+game_window = 3  # Max number of games to display
 ###############################
 
 # Team colors
@@ -57,6 +59,8 @@ period_suffix = {
 
 
 console = Console()
+current_window = 1
+number_of_windows = 1
 
 
 # Pad time with a leading zero if it's less than 10
@@ -77,19 +81,34 @@ def pad_time(time):
 #     "time": string
 # }
 def print_scores(games):
+    global current_window
+    global number_of_windows
+    global game_window
+
     # Clear the console
     os.system('cls' if os.name == 'nt' else 'clear')
 
     # Place the cursor at the top left of the terminal
     print("\033[1;1H", end="")
 
-    # Print the game score
-    for game in games:
-        print_score(game["team1"], game["score1"],
-                    game["team2"], game["score2"], game["time"])
+    if current_window > number_of_windows:
+        current_window = 1
 
+    for i in range((current_window - 1) * game_window, current_window * game_window):
+        if i < len(games):
+            game = games[i]
+            print_score(game["team1"], game["score1"],
+                        game["team2"], game["score2"], game["time"])
+        else:
+            break
+
+    console.print(current_window, "/", number_of_windows, style="white")
+
+    current_window = current_window + 1
 
 # Print the score of a single game
+
+
 def print_score(team1, score1, team2, score2, time):
     try:
         color1 = colors[team1]
@@ -142,5 +161,10 @@ while True:
             if game["gameStatusText"] == "Final":
                 res["time"] = "Final"
             my_games.append(res)
+
+    # Calculate the number of windows based on the number of current games
+    number_of_windows = math.ceil(len(my_games)/game_window)
+
+    # Print the scores
     print_scores(my_games)
     time.sleep(update_interval)
