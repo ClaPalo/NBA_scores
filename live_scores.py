@@ -56,7 +56,6 @@ colors = {
 
 # Period suffixes
 period_suffix = {
-    0: "Pregame",
     1: "1st",
     2: "2nd",
     3: "3rd",
@@ -178,8 +177,8 @@ while True:
         }
         # If any of the values is empty, don't append the game to the list
         if res["team1"] != "" and res["team2"] != "":
-            if game["gameStatusText"] == "Final":
-                res["time"] = "Final"
+            if game["gameStatusText"] == "Final" or game["period"] == 0:
+                res["time"] = game["gameStatusText"]
             my_games.append(res)
 
     if len(my_games) != 0:
