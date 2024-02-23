@@ -150,14 +150,20 @@ def print_no_games():
 
 
 while True:
-    #  Query the NBA API for the current games
-    games = scoreboard.ScoreBoard().games.get_dict()
+    try:
+        #  Query the NBA API for the current games
+        games = scoreboard.ScoreBoard().games.get_dict()
+    except:
+        continue
 
     my_games = []
     for game in games:
         res = {}
         if game["gameClock"] != "":
-            duration = isodate.parse_duration(game["gameClock"])
+            try:
+                duration = isodate.parse_duration(game["gameClock"])
+            except:
+                duration = isodate.parse_duration("PT0S")
 
             # Extract components
             minutes = pad_time(duration.seconds // 60)
