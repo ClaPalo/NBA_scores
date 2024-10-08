@@ -1,7 +1,6 @@
 # CLI NBA Live Scores
 
 Simple script to display all the scores of the NBA games in real time on a CLI.
-This repo is still under development.
 ![Screenshot](./assets/screenshot.png)
 
 ## Instructions
